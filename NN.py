@@ -34,7 +34,7 @@ for train_idx, val_idx in kfold.split(X, Y):
     Y_train, Y_val = Y.iloc[train_idx], Y.iloc[val_idx]
 
     model = create_nn_model()
-    model.fit(x=X_train, y=Y_train, epochs=epochs, verbose=0)  # Set verbose=0 to avoid verbose output
+    model.fit(x=X_train, y=Y_train, epochs=epochs, verbose=0) 
     loss, accuracy = model.evaluate(X_val, Y_val, verbose=0)
     accuracies.append(accuracy)
 
