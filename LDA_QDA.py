@@ -60,4 +60,4 @@ def plot_models(lda, qda):
 # Call the functions
 lda_model = lda_classification()
 qda_model = qda_classification()
-plot_models(lda_model, qda_model)
+#plot_models(lda_model, qda_model)
