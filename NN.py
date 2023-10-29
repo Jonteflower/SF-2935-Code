@@ -39,10 +39,10 @@ for train_idx, val_idx in kfold.split(X, Y):
     accuracies.append(accuracy)
 
 average_accuracy = np.mean(accuracies)
-variance = np.var(accuracies)
+variance = np.std(accuracies)
 
 # Print the average accuracy and variance
-print(f"Neural Network - Average Accuracy: {average_accuracy:.03f}, Variance: {variance:.03f}")
+print(f"Neural Network - Average Accuracy: {average_accuracy:.02f}, Stdev: {variance:.02f}")
 
 # Test the final model on all the data
 final_model = create_nn_model()
