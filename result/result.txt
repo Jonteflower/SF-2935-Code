@@ -1,4 +1,4 @@
-Nearual network - Accuracy: 0.80, Stdev: 0.07, Learning type: 
+Nearual network - Accuracy: 0.58, Stdev: 0.1 Learning type: 
 LDA - Accuracy: 0.72, Stdev: 0.12, Learning Type: 
 QDA - Accuracy: 0.68, Stdev: 0.18, Learning Type:
-KNN - Accuracy: 0.75, Stdev: 0.12, Learning type: 
+KNN - Accuracy: 0.73, Stdev: 0.13, Learning type: 
