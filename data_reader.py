@@ -5,7 +5,7 @@ def remove_outliers_using_iqr(df, column_name):
     Q3 = df[column_name].quantile(0.75)
     IQR = Q3 - Q1
 
-    # Define bounds
+    # Setting upper and lower bound
     lower_bound = Q1 - 1.5 * IQR
     upper_bound = Q3 + 1.5 * IQR
 
