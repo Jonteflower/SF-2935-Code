@@ -62,5 +62,5 @@ true_classes = Y_Test.tolist()
 correct_predictions = sum([1 for predicted, true in zip(predicted_classes, true_classes) if predicted == true])
 manual_accuracy = correct_predictions / len(true_classes)
 
-# Print out accuracy and standard deviation in the desired format
+# Print out accuracy and standard deviation
 print(f"Neural Network - Accuracy: {model_accuracy:.02f}, Stdev: {predictions.std():.02f}")
