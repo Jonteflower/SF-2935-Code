@@ -1,66 +1,56 @@
+import numpy as np
 import tensorflow as tf
 from keras.layers import Dense
 from keras.models import Sequential
-from scikeras.wrappers import KerasClassifier
-from sklearn.model_selection import (StratifiedKFold, cross_val_score,
-                                     train_test_split)
-
+from sklearn.model_selection import StratifiedKFold
 from data_reader import read_training_data
 
 # 1. Read Training Data
-df_train, df_test = read_training_data(False)
+df_train, df_test = read_training_data(True)
 
-# Split the dataset into training and validation set
-df_train, test_data = train_test_split(df_train, test_size=0.2)
+# Prepare data
+Y = df_train["Label"]
+X = df_train.drop('Label', axis=1)
 
-# 2. Preprocess the Data
-Y_Train = df_train["Label"]
-Y_Test = test_data["Label"]
-
-# These columns provided a better result
-columns_to_drop = ["loudness","mode", 'Label']
-
-X_Train = df_train.drop(columns=columns_to_drop)
-X_Train = (X_Train - X_Train.mean()) / X_Train.std()
-
-X_Test = test_data.drop(columns=columns_to_drop)
-#Use X_Train's mean and std for scaling X_Test
-X_Test = (X_Test - X_Train.mean()) / X_Train.std()
-
-#Set the number of epochs and leartning rate
+# Number of epochs and learning rate
 learning_rate = 0.005
 epochs = 100
 
-# 3. Define the Neural Network Model
+# Create the NN
 def create_nn_model():
     model = Sequential()
-    model.add(Dense(10, input_dim=len(X_Train.columns), activation="relu"))
+    model.add(Dense(10, input_dim=X.shape[1], activation="relu"))
     model.add(Dense(1, activation="sigmoid"))
-
-    opt = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-    model.compile(loss="binary_crossentropy", optimizer=opt, metrics=["accuracy"])
-    
+    model.compile(loss="binary_crossentropy", metrics=["accuracy"])
     return model
 
+# Run cross validation with 5 folds
+n_splits = 5
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True)
+accuracies = []
 
-model = create_nn_model()
+for train_idx, val_idx in kfold.split(X, Y):
+    X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
+    Y_train, Y_val = Y.iloc[train_idx], Y.iloc[val_idx]
 
-# Train the model
-model.fit(x=X_Train, y=Y_Train, epochs=epochs)
+    model = create_nn_model()
+    model.fit(x=X_train, y=Y_train, epochs=epochs, verbose=0)  # Set verbose=0 to avoid verbose output
+    loss, accuracy = model.evaluate(X_val, Y_val, verbose=0)
+    accuracies.append(accuracy)
 
-# Evaluate the model for accuracy directly
-loss, model_accuracy = model.evaluate(X_Test, Y_Test)
+average_accuracy = np.mean(accuracies)
+variance = np.var(accuracies)
 
-# Get predictions
-predictions = model.predict(X_Test)
+# Print the average accuracy and variance
+print(f"Neural Network - Average Accuracy: {average_accuracy:.03f}, Variance: {variance:.03f}")
 
-# Convert predictions and true labels to binary 0 or 1 based on threshold
-predicted_classes = [1 if pred >= 0.5 else 0 for pred in predictions]
-true_classes = Y_Test.tolist()
+# Test the final model on all the data
+final_model = create_nn_model()
+final_model.fit(x=X, y=Y, epochs=epochs, verbose=0)  # Train on the entire dataset
 
-# Calculate manual accuracy 
-correct_predictions = sum([1 for predicted, true in zip(predicted_classes, true_classes) if predicted == true])
-manual_accuracy = correct_predictions / len(true_classes)
+# Save the predictions on the music dataste
+pred_probs = final_model.predict(df_test)
+preds = (pred_probs >= 0.5).astype(int).flatten()
 
-# Print out accuracy and standard deviation
-print(f"Neural Network - Accuracy: {model_accuracy:.02f}, Stdev: {predictions.std():.02f}")
+with open('result/prediction_NN.csv', 'w') as f:
+    f.write(','.join(map(str, preds)))

@@ -48,8 +48,8 @@ def plot_knn_performance(x, y):
     
     plt.show()
 
-# Main execution
-df_train, df_test = read_training_data()
+# Read the training data
+df_train, df_test = read_training_data(False)
 
 # Preprocess data
 df_train = preprocess_data(df_train)
