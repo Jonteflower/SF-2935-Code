@@ -1,20 +1,19 @@
 import matplotlib.pyplot as plt
 from data_reader import read_training_data
 
-# reading data
+# Getting the data
 df_train, df_test = read_training_data(False)
+
 def plot_combined_histograms_2col(df, label_column, bins=30):
 
     unique_labels = df[label_column].unique()
     
-    # Splitting data based on the labels
+    # Splitting the data on 0,1
     data_0 = df.loc[df[label_column] == unique_labels[0]]
     data_1 = df.loc[df[label_column] == unique_labels[1]]
     
-    # Number of features to plot
-    n_features = len(df.columns) - 1  # Subtracting one for the label column
-
-    # Calculate the number of rows needed for n features in a 2-column layout
+    # Number of features and rows to plot
+    n_features = len(df.columns) - 1 
     n_rows = -(-n_features // 2) 
 
     # Setting up the grid for the subplots
@@ -38,5 +37,4 @@ def plot_combined_histograms_2col(df, label_column, bins=30):
     plt.tight_layout()
     plt.show()
 
-# Usage
 plot_combined_histograms_2col(df_train, "Label")
