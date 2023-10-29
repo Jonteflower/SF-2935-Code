@@ -59,7 +59,7 @@ x_train = df_train.drop('Label', axis=1)
 y_train = df_train['Label']
 
 # Plot performance
-#plot_knn_performance(x_train, y_train)
+plot_knn_performance(x_train, y_train)
 
 # Grid search
 #optimal_k = optimal_k_using_gridsearch(x_train, y_train)
